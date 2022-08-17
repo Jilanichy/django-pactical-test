@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from datetime import date
+from phonenumber_field.modelfields import PhoneNumberField
 
 # app contains three distinct plans
 PLAN_CHOICES = (
@@ -19,15 +20,16 @@ COMPANY_CHOICES = (
 
 class SubscriptionInfo(models.Model):
     plan_type = models.CharField(choices=PLAN_CHOICES, max_length=6, blank=True)
-    subscriber = models.ForeignKey('auth.User', related_name='SubscriptionInfo', on_delete=models.CASCADE)
-    primary_phone_number = models.CharField(max_length=14, unique=True)
-    other_phone_number = models.CharField(max_length=14, blank=True)
-    subscription_price = models.FloatField(blank=True, default=0)
+    admin = models.ForeignKey('auth.User', related_name='SubscriptionInfo', on_delete=models.CASCADE)
+    subscriber_name = models.CharField(max_length=100, blank=True)
+    primary_phone_number = PhoneNumberField(null=False, blank=False, unique=True)
+    other_phone_number = PhoneNumberField(blank=True)
     subscribed_company = models.CharField(choices=COMPANY_CHOICES, max_length=14)
     contract_initiated = models.DateTimeField(auto_now_add=True)
     phone_number_owner = models.CharField(max_length=100, blank=True)
-  
-  	# To get the price per plan based on customer plan selection, there's three plan in PLAN_CHOICES
+    subscription_price = models.FloatField(blank=True, default=0)
+
+    # To get the price per plan based on customer plan selection, there's three plan in PLAN_CHOICES
     def save(self, *args, **kwargs):
         if self.plan_type == 'Bronze':
             self.subscription_price = 500
