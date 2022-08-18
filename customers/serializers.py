@@ -21,8 +21,8 @@ class SubscriptionInfoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SubscriptionInfo
-        fields = ['id', 'admin', 'subscriber_name', 'primary_phone_number', 'other_phone_number', 
-            'plan_type', 'subscription_price', 'subscribed_company', 'phone_number_owner', 
+        fields = ['id', 'admin', 'subscriber_name', 'subscribed_company', 'primary_phone_number', 'other_phone_number', 
+            'plan_type', 'phone_number_owner', 
             'contract_initiated']
  
 
