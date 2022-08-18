@@ -3,13 +3,25 @@ from rest_framework import serializers
 from customers.models import SubscriptionInfo, PLAN_CHOICES, COMPANY_CHOICES
 from django.contrib.auth.models import User
 
+'''
+    'SubscriptionInfo' has reverse relationship on the User model, 
+    it'll not be included by default when using the ModelSerializer class, 
+    that's why an explicit field has been added
+'''
+class UserSerializer(serializers.ModelSerializer):
+    SubscriptionInfo = serializers.PrimaryKeyRelatedField(many=True, queryset=SubscriptionInfo.objects.all())
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'SubscriptionInfo']
+
 
 class SubscriptionInfoSerializer(serializers.ModelSerializer):
-    subscriber = serializers.ReadOnlyField(source='subscriber.username')
+    admin = serializers.ReadOnlyField(source='admin.username')
 
     class Meta:
         model = SubscriptionInfo
-        fields = ['id', 'subscriber', 'primary_phone_number', 'other_phone_number', 
+        fields = ['id', 'admin', 'subscriber_name', 'primary_phone_number', 'other_phone_number', 
             'plan_type', 'subscription_price', 'subscribed_company', 'phone_number_owner', 
             'contract_initiated']
  
