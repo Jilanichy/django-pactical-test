@@ -29,15 +29,6 @@ class SubscriptionInfo(models.Model):
     phone_number_owner = models.CharField(max_length=100, blank=True)
     subscription_price = models.FloatField(blank=True, default=0)
 
-    # if a subscriber subscribed to a paid plan, subscriber will own the phone number otherwise the company
-    def save(self, *args, **kwargs):
-        if self.plan_type:
-            self.phone_number_owner = self.subscriber_name
-        else:
-            self.phone_number_owner = self.subscribed_company
-
-        super(SubscriptionInfo, self).save(*args, **kwargs)
-
     # To get the price per plan based on customer plan selection, there's three plan in PLAN_CHOICES
     def save(self, *args, **kwargs):
         if self.plan_type == 'Bronze':
@@ -48,6 +39,15 @@ class SubscriptionInfo(models.Model):
             self.subscription_price = 1500
         super(SubscriptionInfo, self).save(*args, **kwargs)
 
+    # if a subscriber subscribed to a paid plan, subscriber will own the phone number otherwise the company
+    def save(self, *args, **kwargs):
+        if self.plan_type:
+            self.phone_number_owner = self.subscriber_name
+        else:
+            self.phone_number_owner = self.subscribed_company
+
+        super(SubscriptionInfo, self).save(*args, **kwargs)
+        
     # To get a customer's contract remaining days
     def get_contract_remaining_day(self):
         if PLAN_CHOICES[2][0]:
